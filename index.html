@@ -1,18 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scrolling animation website</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
     <div class=" w-full bg-zinc-900">
-        <div class="parent w-full h-[1400vh] relative" >
+        <div class="parent w-full h-[1400vh] relative">
             <div class="h-screen w-full sticky top-0 left-0">
                 <canvas id="canvas" class=" w-full h-screen "></canvas>
             </div>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+        integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+        integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        const canvas = document.querySelector("#canvas");
+        const contex = canvas.getContext("2d");
+
+        const frames = {
+            cureentIndex: 0,
+            maxIndex: 538
+        }
+        const images = [];
+        let imageLoaded = 0;
+        const preLoadImages = () => {
+            for (var i = 1; i <= frames.maxIndex; i++) {
+                let imgUrl = `./frames/frame_${i.toString().padStart(4, '0')}.jpeg`
+                let img = new Image();
+                img.src = imgUrl;
+                img.onload = () => {
+                    imageLoaded++;
+                    // console.log(imageLoaded)
+                    if (imageLoaded === frames.maxIndex) {
+                        console.log("All images loaded")
+                        loadImage(frames.cureentIndex);
+                        startAnimation();
+                    }
+                }
+                images.push(img);
+            }
+
+
+        }
+
+        const loadImage = (index) => {
+            const img = images[index];
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const scaleX = canvas.width / img.width;
+            const scaleY = canvas.height / img.height;
+            const scale = Math.max(scaleX, scaleY);
+
+            const newWidth = img.width * scale;
+            const newHeight = img.height * scale;
+
+            const offsetX = (canvas.width - newWidth) / 2;
+            const offsetY = (canvas.height - newHeight) / 2;
+
+            contex.clearRect(0, 0, canvas.width, canvas.height);
+            contex.imageSmoothingEnabled = true;
+            contex.imageSmoothingQuality = "high";
+            contex.drawImage(img, offsetX, offsetY, newWidth, newHeight)
+
+            frames.cureentIndex = index;
+        }
+
+        const startAnimation = () => {
+            var tl=gsap.timeline({
+                scrollTrigger:{
+                    trigger:'.parent',
+                    start:'top top',
+                    scrub:2,
+                    end:'bottom bottom'
+                }
+            })
+            tl.to(frames,{
+                cureentIndex:frames.maxIndex,
+                onUpdate:()=>{
+                    loadImage(Math.floor(frames.cureentIndex));
+                }
+
+            })
+
+
+
+        }
+
+        preLoadImages();
+
+    </script>
 </body>
+
 </html>
