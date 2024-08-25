@@ -78,17 +78,17 @@
         }
 
         const startAnimation = () => {
-            var tl=gsap.timeline({
-                scrollTrigger:{
-                    trigger:'.parent',
-                    start:'top top',
-                    scrub:2,
-                    end:'bottom bottom'
+            var tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.parent',
+                    start: 'top top',
+                    scrub: 2,
+                    end: 'bottom bottom'
                 }
             })
-            tl.to(frames,{
-                cureentIndex:frames.maxIndex,
-                onUpdate:()=>{
+            tl.to(frames, {
+                cureentIndex: frames.maxIndex,
+                onUpdate: () => {
                     loadImage(Math.floor(frames.cureentIndex));
                 }
 
@@ -98,6 +98,10 @@
 
         }
 
+
+        window.addEventListener('resize', () => {
+            loadImage(Math.floor(frames.cureentIndex));
+        });
         preLoadImages();
 
     </script>
