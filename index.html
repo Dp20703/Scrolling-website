@@ -5,6 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scrolling animation website</title>
+    <!-- lens:CSS -->
+    <style>
+        html.lenis,
+        html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        .lenis.lenis-smooth iframe {
+            pointer-events: none;
+        }
+    </style>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -54,8 +77,9 @@
                     </div>
                 </div>
 
-                <div class="panelism absolute z-[2] text-white left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  text-center text-6xl tracking-tighter opacity-0">
-                    &copy;Panelism  <span class="line w-10 h-1 bg-white inline-block"></span>2048
+                <div
+                    class="panelism absolute z-[2] text-white left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  text-center text-6xl tracking-tighter opacity-0">
+                    &copy;Panelism <span class="line w-10 h-1 bg-white inline-block"></span>2048
                 </div>
             </div>
         </div>
@@ -73,37 +97,30 @@
                 <h3 class="text-7xl">Rina Yamada</h3>
                 <h3 class="text-7xl">Shinji Ito</h3>
                 <h3 class="text-7xl">Emi Watanabe</h3>
-                <h3 class="text-7xl">Koji Matsumoto</h3>
-                <h3 class="text-7xl">Ayumi Inoue</h3>
-                <h3 class="text-7xl">Masato Kimura</h3>
-                <h3 class="text-7xl">Haruka Shimizu</h3>
-                <h3 class="text-7xl">Ryo Hayashi</h3>
-                <h3 class="text-7xl">Mai Mori</h3>
-                <h3 class="text-7xl">Daiki Fukuda</h3>
-                <h3 class="text-7xl">Yoko Arai</h3>
-                <h3 class="text-7xl">Jun Sasaki</h3>
-                <h3 class="text-7xl">Keiko Takahashi</h3>
             </div>
         </div>
     </div>
-    
 
+    <!-- gsap:for scroll trigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
         integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
         integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!--lenis for smooth scrolling -->
+    <script src="https://unpkg.com/lenis@1.1.11/dist/lenis.min.js"></script>
 
     <script>
         const canvas = document.querySelector("#canvas");
-        const contex = canvas.getContext("2d");
+        const contex = canvas.getContext("2d");//context used to draw anything on canvas:
         const frames = {
             cureentIndex: 0,
             maxIndex: 538
         }
-        const images = [];
+        const images = [];//store all the images:
         let imageLoaded = 0;
+        //to preLoadImages:
         const preLoadImages = () => {
             for (var i = 1; i <= frames.maxIndex; i++) {
                 let imgUrl = `./frames/frame_${i.toString().padStart(4, '0')}.jpeg`
@@ -122,6 +139,7 @@
             }
         }
 
+        //to loadImag:
         const loadImage = (index) => {
             const img = images[index];
             canvas.width = window.innerWidth;
@@ -145,6 +163,7 @@
             frames.cureentIndex = index;
         }
 
+        //to add animation:
         const startAnimation = () => {
             var tl = gsap.timeline({
                 scrollTrigger: {
@@ -188,42 +207,52 @@
                 .to(frames, updateFrame(350), "eleventh")
                 .to("canvas", { scale: .5, ease: "linear" }, "eleventh")
                 .to(frames, updateFrame(380), "twelvth")
-                .to(".panelism", { opacity:1, ease: "expo" }, "twelvth")
+                .to(".panelism", { opacity: 1, ease: "expo" }, "twelvth")
                 .to(frames, updateFrame(410), "twelvth")
-                .to(".panelism span", { width:200 , ease: "expo" }, "twelvth")
+                .to(".panelism span", { width: 200, ease: "expo" }, "twelvth")
                 .to(frames, updateFrame(440), "thirteen")
                 .to("canvas", { scale: 1, ease: "linear" }, "thirteen")
                 .to(frames, updateFrame(480), "fourteen")
-                .to(".panelism", { scale:2, ease: "circ" }, "fourteen")
+                .to(".panelism", { scale: 2, ease: "circ" }, "fourteen")
                 .to(frames, updateFrame(537), "fifteen")
-                .to(".panelism", { scale:2, ease: "circ" }, "fifteen")
+                .to(".panelism", { scale: 2, ease: "circ" }, "fifteen")
 
 
 
 
         }
 
+        //calling the preLoadImages function:
         preLoadImages();
 
+        //to handle resize of window:
         window.addEventListener('resize', () => {
             loadImage(Math.floor(frames.cureentIndex));
         });
 
+        // fade effect on heading using gsap-trigger:
         document.querySelectorAll(".headings h3")
-        .forEach((elem)=>{
-            gsap.from(elem,{
-                scrollTrigger:{
-                    trigger:elem,
-                    start:'top 90%',
-                    end:'bottom 20%',
-                    scrub:2
-                },
-                opacity:.3
+            .forEach((elem) => {
+                gsap.from(elem, {
+                    scrollTrigger: {
+                        trigger: elem,
+                        start: 'top 90%',
+                        end: 'bottom 20%',
+                        scrub: 2
+                    },
+                    opacity: .3
+                })
+
             })
 
-        })
-        
 
+        // Lenis:CODE
+        const lenis = new Lenis()
+        function raf(time) {
+            lenis.raf(time)
+            requestAnimationFrame(raf)
+        }
+        requestAnimationFrame(raf)
     </script>
 </body>
 
